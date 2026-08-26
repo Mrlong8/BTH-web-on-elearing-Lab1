@@ -1,4 +1,4 @@
-﻿namespace BTHLap03_ProfileAccount.Models
+﻿namespace BTHLap03_ProfileAccount.Models.Data
 {
     public class DataAccounts
     {

@@ -1,4 +1,5 @@
 ﻿using BTHLap03_ProfileAccount.Models;
+using BTHLap03_ProfileAccount.Models.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BTHLap03_ProfileAccount.Controllers

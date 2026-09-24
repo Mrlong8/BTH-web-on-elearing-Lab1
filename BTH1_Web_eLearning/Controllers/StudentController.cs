@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BTH1_Web_eLearning.Controllers
 {
+    [Route("Admin/Student")]
     public class StudentController : Controller
     {
-        private List<Student> listStudents = new List<Student>();
-        
-        public StudentController()
+        private static List<Student> listStudents = new List<Student>();
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public StudentController(IWebHostEnvironment webHostEnvironment)
         {
+            _webHostEnvironment = webHostEnvironment;
             //Tạo danh sách sinh viên với 4 dữ liệu mẫu
             listStudents = new List<Student>() {
                 new Student()
@@ -20,7 +22,8 @@ namespace BTH1_Web_eLearning.Controllers
                     Gender = Gender.Male,
                     IsRegular = true,
                     Address = "A1-2018",
-                    Email = "nam@g.com"
+                    Email = "nam@g.com",
+                    Avatar = "/Image/i1.jpg"
                 },
                 new Student()
                 {
@@ -31,6 +34,8 @@ namespace BTH1_Web_eLearning.Controllers
                     Address = "A1-2019",
                     Email = "tu@g.com",
                 Branch = Branch.BE,
+                    Avatar = "/Image/i1.jpg"
+
                 },
                 new Student()
                 {
@@ -40,7 +45,8 @@ namespace BTH1_Web_eLearning.Controllers
                     Gender = Gender.Male,
                     IsRegular = false,
                     Address = "A1-2020",
-                    Email = "phong@g.com"
+                    Email = "phong@g.com",
+                    Avatar = "/Image/i1.jpg"
                 },
                 new Student()
                 {
@@ -50,12 +56,14 @@ namespace BTH1_Web_eLearning.Controllers
                     Gender = Gender.Female,
                     IsRegular = false,
                     Address = "A1-2021",
-                    Email = "mai@g.com"
+                    Email = "mai@g.com",
+                    Avatar = "/Image/i1.jpg"
+
                 }
              };
         }
 
-        [HttpGet]
+        [HttpGet("Add")]
         public IActionResult Create() { 
 //lấy danh sách các giá trị Gender để hiển thị radio button trên form
             ViewBag.AllGenders = Enum.GetValues(typeof(Gender)).Cast<Gender>().ToList(); 
@@ -70,9 +78,28 @@ namespace BTH1_Web_eLearning.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Create(Student s)
-        { 
+        [HttpPost("Add")]
+        public async Task<IActionResult> Create(Student s,IFormFile? avatarFile)
+        {
+            if (avatarFile != null && avatarFile.Length > 0)
+            {
+                string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "Image");
+                string fileName = Guid.NewGuid().ToString() + "_" + avatarFile.FileName;
+                string filePath = Path.Combine(uploadDir, fileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await avatarFile.CopyToAsync(fileStream);
+                }
+
+                s.Avatar = "/Image/" + fileName;
+            }
+            else
+            {
+                // Nếu không chọn ảnh thì gán ảnh mặc định
+                s.Avatar = "/Image/i1.jpg";
+            }
+
             s.Id = listStudents.Last<Student>().Id + 1;
             listStudents.Add(s);
             //IFormFile? avatar = model.Avatar;
@@ -80,7 +107,9 @@ namespace BTH1_Web_eLearning.Controllers
         }
 
 
-public IActionResult Index()
+
+        [HttpGet("List")]
+        public IActionResult Index()
         {
             return View(listStudents);
         }

@@ -12,6 +12,6 @@
         public bool IsRegular { get; set; }//Hệ: true-chính qui, false-phi cq
         public string? Address { get; set; }//Địa chi
         public DateTime DateOfBorth { get; set; }//Ngày sinh
-        public IFormFile? Avatar { get; set; }// Tên hoặc đường dẫn ảnh đại diện
+        public string? Avatar { get; set; }// Tên hoặc đường dẫn ảnh đại diện
     }
 }
